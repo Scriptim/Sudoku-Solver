@@ -1,3 +1,5 @@
+import java.security.InvalidParameterException;
+
 /**
  * @author Scriptim
  */
@@ -14,7 +16,22 @@ public class Sudoku {
    * @param board is used to set the input board, that is going to be solved.
    */
   public Sudoku(byte[][] board) {
-    // TODO: implement
+    this.board = board;
+
+    // check dimensions
+    if (this.board.length != 9) {
+      throw new InvalidParameterException("Expected board of size 9x9");
+    }
+    for (byte[] r : this.board) {
+      if (r.length != 9) {
+        throw new InvalidParameterException("Expected board of size 9x9");
+      }
+    }
+
+    // check board
+    if (!checkAll()) {
+      throw new InvalidParameterException("Invalid board");
+    }
   }
 
   /**
@@ -34,8 +51,7 @@ public class Sudoku {
    * @return the board.
    */
   public byte[][] getBoard() {
-    // TODO: implement
-    return new byte[0][0];
+    return this.board;
   }
 
   /**
@@ -44,8 +60,22 @@ public class Sudoku {
    * @return whether all cells are valid.
    */
   private boolean checkAll() {
-    // TODO: implement
-    return false;
+    for (byte r = 0; r < this.board.length; r++) {
+      for (byte c = 0; c < this.board[r].length; c++) {
+        // set temporary to 0, otherwise would always be invalid because row, column and box already contain
+        byte n = this.board[r][c];
+        if (n == 0) {
+          continue;
+        }
+        this.board[r][c] = 0;
+        boolean valid = checkCell(n, r, c);
+        this.board[r][c] = n;
+        if (!valid) {
+          return false;
+        }
+      }
+    }
+    return true;
   }
 
   /**
@@ -57,8 +87,7 @@ public class Sudoku {
    * @return whether the cell is valid.
    */
   private boolean checkCell(byte n, byte row, byte col) {
-    // TODO: implement
-    return false;
+    return this.checkRow(n, row) && this.checkCol(n, col) && this.checkBox(n, getBoxNum(row, col));
   }
 
   /**
@@ -69,8 +98,12 @@ public class Sudoku {
    * @return whether the row is valid.
    */
   private boolean checkRow(byte n, byte row) {
-    // TODO: implement
-    return false;
+    for (byte c = 0; c < this.board[row].length; c++) {
+      if (this.board[row][c] == n) {
+        return false;
+      }
+    }
+    return true;
   }
 
   /**
@@ -81,8 +114,12 @@ public class Sudoku {
    * @return whether the column is valid.
    */
   private boolean checkCol(byte n, byte col) {
-    // TODO: implement
-    return false;
+    for (byte r = 0; r < this.board.length; r++) {
+      if (this.board[r][col] == n) {
+        return false;
+      }
+    }
+    return true;
   }
 
   /**
@@ -94,13 +131,18 @@ public class Sudoku {
    * @see #getBoxNum(byte, byte) for details on the box numbering.
    */
   private boolean checkBox(byte n, byte box) {
-    // TODO: implement
-    return false;
+    for (byte r = 0; r < this.board.length; r++) {
+      for (byte c = 0; c < this.board[r].length; c++) {
+        if (this.getBoxNum(r, c) == box && n == this.board[r][c]) {
+          return false;
+        }
+      }
+    }
+    return true;
   }
 
   /**
-   * Get the number of a box by the row and column. The boxes are numbered from left to right and top to 
-bottom:
+   * Get the number of a box by the row and column. The boxes are numbered from left to right and top to bottom:
    * <table>
    * <tr><td>0</td><td>1</td><td>2</td></tr>
    * <tr><td>3</td><td>4</td><td>5</td></tr>
@@ -112,7 +154,31 @@ bottom:
    * @return the number of the box
    */
   private byte getBoxNum(byte row, byte col) {
-    // TODO: implement
+    if (row < 3) {
+      if (col < 3) {
+        return 0;
+      } else if (col < 6) {
+        return 1;
+      } else if (col < 9) {
+        return 2;
+      }
+    } else if (row < 6) {
+      if (col < 3) {
+        return 3;
+      } else if (col < 6) {
+        return 4;
+      } else if (col < 9) {
+        return 5;
+      }
+    } else if (row < 9) {
+      if (col < 3) {
+        return 6;
+      } else if (col < 6) {
+        return 7;
+      } else if (col < 9) {
+        return 8;
+      }
+    }
     return -1;
   }
 
