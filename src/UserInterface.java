@@ -7,11 +7,22 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+/**
+ * A graphical user interface to the sudoku solver.
+ */
 class UserInterface extends JPanel {
+  /**
+   * Array of the input fields, each representing a cell.
+   */
   final private JTextField[] board;
 
+  /**
+   * The default constructor.
+   */
   private UserInterface() {
     this.board = new JTextField[81];
+
+    // accept one digit per cell
     DocumentFilter docFilter = new DocumentFilter() {
       @Override
       public void replace(DocumentFilter.FilterBypass fb, int offset, int length, String text, AttributeSet attrs) throws BadLocationException {
@@ -20,6 +31,8 @@ class UserInterface extends JPanel {
         }
       }
     };
+
+    // init input text fields
     for (int i = 0; i < this.board.length; i++) {
       this.board[i] = new JTextField();
       this.board[i].setBounds(20 + i / 9 * 40, 20 + i % 9 * 40, 40, 40);
@@ -30,6 +43,7 @@ class UserInterface extends JPanel {
       this.add(this.board[i]);
     }
 
+    // clear button
     JButton clearBtn = new JButton("Clear");
     clearBtn.setBounds(210, 400, 100, 30);
     clearBtn.addActionListener(new ActionListener() {
@@ -42,6 +56,7 @@ class UserInterface extends JPanel {
     });
     this.add(clearBtn);
 
+    // solve button
     JButton solveBtn = new JButton("Solve");
     solveBtn.setBounds(90, 400, 100, 30);
     solveBtn.addActionListener(new ActionListener() {
@@ -79,16 +94,19 @@ class UserInterface extends JPanel {
     this.add(solveBtn);
 
     this.setPreferredSize(new Dimension(400, 450));
-    this.setLayout(null);
+    this.setLayout(null); // absolute positioning
   }
 
+  /**
+   * Static method to show the ui.
+   */
   static void showUserInterface() {
     JFrame frame = new JFrame("Sudoku Solver");
     frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     frame.getContentPane().add(new UserInterface());
     frame.pack();
     frame.setResizable(false);
-    frame.setLocationRelativeTo(null);
+    frame.setLocationRelativeTo(null); // center
     frame.setVisible(true);
   }
 
