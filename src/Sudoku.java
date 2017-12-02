@@ -1,4 +1,6 @@
 import java.security.InvalidParameterException;
+import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  * @author Scriptim
@@ -41,8 +43,39 @@ public class Sudoku {
    * @see <a href="https://en.wikipedia.org/wiki/Sudoku_solving_algorithms#Backtracking">Wikipedia</a>
    */
   public boolean solve() {
-    // TODO: implement
-    return false;
+    byte[][] originalBoard = this.board.clone(); // clone to reset array if no solution found
+    boolean success = this.solve(this.board);
+    if (!success) {
+      this.board = originalBoard;
+    }
+    return success;
+  }
+
+  /**
+   * Solves a given board. Used for recursive backtracking.
+   *
+   * @param board the board.
+   * @return whether the the sudoku could be solved.
+   */
+  private boolean solve(byte[][] board) {
+    this.board = board;
+    for (byte row = 0; row < board.length; row++) {
+      for (byte col = 0; col < board[row].length; col++) {
+        if (board[row][col] == 0) {
+          ArrayList<Byte> candidates = this.getCandidates(row, col);
+          Collections.shuffle(candidates);
+          for (byte n = 0; n < candidates.size(); n++) {
+            board[row][col] = candidates.get((byte) n);
+            if (this.solve(board)) {
+              return true;
+            }
+            board[row][col] = 0;
+          }
+          return false;
+        }
+      }
+    }
+    return true; // sudoku solved
   }
 
   /**
@@ -180,6 +213,23 @@ public class Sudoku {
       }
     }
     return -1;
+  }
+
+  /**
+   * Get the candidates (valid numbers) by row and column.
+   *
+   * @param row the row (0-9).
+   * @param col the column (0-9).
+   * @return an byte array containing all valid numbers.
+   */
+  private ArrayList<Byte> getCandidates(byte row, byte col) {
+    ArrayList<Byte> candidates = new ArrayList<>();
+    for (byte n = 1; n <= 9; n++) {
+      if (this.checkCell(n, row, col)) {
+        candidates.add(n);
+      }
+    }
+    return candidates;
   }
 
 }
