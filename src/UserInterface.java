@@ -53,6 +53,7 @@ class UserInterface extends JPanel {
       public void actionPerformed(ActionEvent actionEvent) {
         solveBtn.setEnabled(true);
         for (JTextField tf : board) {
+          tf.setEditable(true);
           tf.setText("");
         }
       }
@@ -77,7 +78,9 @@ class UserInterface extends JPanel {
             boardValues = sudoku.getBoard();
             for (byte row = 0; row < boardValues.length; row++) {
               for (byte col = 0; col < boardValues[row].length; col++) {
-                board[row * 9 + col].setText(String.valueOf(boardValues[row][col]));
+                int index = row * 9 + col;
+                board[index].setEditable(false);
+                board[index].setText(String.valueOf(boardValues[row][col]));
               }
             }
           } else {
