@@ -43,12 +43,15 @@ class UserInterface extends JPanel {
       this.add(this.board[i]);
     }
 
-    // clear button
     JButton clearBtn = new JButton("Clear");
+    JButton solveBtn = new JButton("Solve");
+
+    // clear button
     clearBtn.setBounds(210, 400, 100, 30);
     clearBtn.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent actionEvent) {
+        solveBtn.setEnabled(true);
         for (JTextField tf : board) {
           tf.setText("");
         }
@@ -57,14 +60,10 @@ class UserInterface extends JPanel {
     this.add(clearBtn);
 
     // solve button
-    JButton solveBtn = new JButton("Solve");
     solveBtn.setBounds(90, 400, 100, 30);
     solveBtn.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent actionEvent) {
-        solveBtn.setEnabled(false);
-        clearBtn.setEnabled(false);
-
         byte[][] boardValues = new byte[9][9];
         for (int i = 0; i < board.length; i++) {
           String text = board[i].getText();
@@ -74,6 +73,7 @@ class UserInterface extends JPanel {
         try {
           Sudoku sudoku = new Sudoku(boardValues);
           if (sudoku.solve()) {
+            solveBtn.setEnabled(false);
             boardValues = sudoku.getBoard();
             for (byte row = 0; row < boardValues.length; row++) {
               for (byte col = 0; col < boardValues[row].length; col++) {
@@ -86,9 +86,6 @@ class UserInterface extends JPanel {
         } catch (Exception ex) {
           JOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
-
-        solveBtn.setEnabled(true);
-        clearBtn.setEnabled(true);
       }
     });
     this.add(solveBtn);
